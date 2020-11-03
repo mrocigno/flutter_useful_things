@@ -23,7 +23,6 @@ class _BumpAnimateState extends State<BumpAnimate> with TickerProviderStateMixin
   void initState() {
     super.initState();
     _controller = AnimationController(
-      vsync: this,
       duration: Duration(milliseconds: 200),
     );
   }

@@ -34,7 +34,6 @@ class _FadeAnimation extends State<FadeAnimation> with SingleTickerProviderState
   void initState() {
     super.initState();
     controller = AnimationController(
-      vsync: this,
       duration: widget.duration
     );
   }
@@ -54,20 +53,21 @@ class _FadeAnimation extends State<FadeAnimation> with SingleTickerProviderState
     });
     else controller.reset();
 
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, child) {
-        return Opacity(
-          opacity: opacity.value,
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: size.value
-            ),
-            child: widget.child,
-          ),
-        );
-      },
-    );
+    return Wrap();
+    // return AnimatedBuilder(
+    //   animation: controller,
+    //   builder: (context, child) {
+    //     return Opacity(
+    //       opacity: opacity.value,
+    //       child: Container(
+    //         constraints: BoxConstraints(
+    //           maxHeight: size.value
+    //         ),
+    //         child: widget.child,
+    //       ),
+    //     );
+    //   },
+    // );
   }
 
 }

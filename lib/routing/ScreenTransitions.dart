@@ -8,7 +8,7 @@ class ScreenTransitions {
 
   static void _registerObservers(BaseScreen screen) {
     if(screen is RouteObserverMixin){
-      AppRoute.register(screen.name, screen as RouteObserverMixin);
+      AppRoute.register(screen.name, screen);
     }
   }
 

@@ -1,0 +1,16 @@
+builders:
+#  property_multiply:
+#    import: "package:flutter_useful_things/database/build.dart"
+#    builder_factories: ["teste"]
+#    build_extensions: {".dart": ["multiply.g.part"]}
+#    auto_apply: dependents
+#    build_to: cache
+#    applies_builders: ["source_gen|combining_builder"]
+
+  dao_generator:
+    import: "package:flutter_useful_things/database/build.dart"
+    builder_factories: ["entityGenerator"]
+    build_extensions: {".dart": ["entity.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

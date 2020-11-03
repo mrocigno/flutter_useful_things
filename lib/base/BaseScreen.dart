@@ -71,7 +71,7 @@ class _BaseScreenScope extends InheritedWidget {
   _BaseScreenScope({
     key,
     child,
-    this.state
+    this.state,
   }) : super(key: key, child: child);
 
   final BaseScreen state;
