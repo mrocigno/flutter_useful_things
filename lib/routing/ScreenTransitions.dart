@@ -34,12 +34,6 @@ class ScreenTransitions {
 
   static RouteTransitionsBuilder _getAnimation(Animations animation) {
     switch(animation){
-      case Animations.FADE: return (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
-      };
       case Animations.SLIDE_DOWN: return (context, animation, secondaryAnimation, child) {
         Animation<Offset> offset = Tween<Offset>(
           begin: Offset(0, -1),
@@ -49,6 +43,13 @@ class ScreenTransitions {
         return SlideTransition(
             position: offset,
             child: child
+        );
+      };
+      case Animations.FADE:
+      default: return (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
         );
       };
     }

@@ -1,21 +1,19 @@
+import 'package:flutter_useful_things/json/annotations/JsonMapperAnnotations.dart';
 
-
-
-import 'package:flutter_useful_things/database/base/Annotations.dart';
-import 'package:flutter_useful_things/database/base/Entity.dart';
+import '../Omg.dart';
 
 part 'testeee.g.dart';
 
-abstract class User with Entity {
+@Serialize
+class User {
 
-  @PrimaryKey
-  @AutoIncrement
-  @Field("seupaidecalcinha")
   int id;
-
-  @Field("roberto")
   String name;
-
   String teste;
+  bool favorite;
+  Teste testeeee;
+
+  @Ignore
+  Omg omggggg;
 
 }

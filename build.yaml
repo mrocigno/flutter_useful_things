@@ -7,10 +7,10 @@ builders:
 #    build_to: cache
 #    applies_builders: ["source_gen|combining_builder"]
 
-  dao_generator:
-    import: "package:flutter_useful_things/database/build.dart"
-    builder_factories: ["entityGenerator"]
-    build_extensions: {".dart": ["entity.g.part"]}
+  json_generator:
+    import: "package:flutter_useful_things/json/build.dart"
+    builder_factories: ["jsonGenerator"]
+    build_extensions: {".dart": ["json.g.part"]}
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
