@@ -17,13 +17,19 @@ class FlexibleSpaceSearchBar extends StatefulWidget {
   final String initialData;
   final Stream<bool> loadObserver;
   final Function(String text) onTextChanged;
+  final String title;
+  final String placeholder;
+  final String heroTag;
 
   FlexibleSpaceSearchBar({
     Key key,
     this.onPerformSearch,
     this.initialData,
     this.loadObserver,
-    this.onTextChanged
+    this.onTextChanged,
+    this.title = "",
+    this.placeholder = "",
+    this.heroTag = "SearchField"
   }) : super(key: key);
 
   @override
@@ -70,20 +76,20 @@ class FlexibleSpaceSearchBarState extends State<FlexibleSpaceSearchBar> {
             child: Container(
               alignment: Alignment.center,
               height: 56,
-              child: Text("Pesquisa", style: TextStyle(fontSize: 20, color: Constants.Colors.PRIMARY_SWATCH),),
+              child: Text(widget.title, style: TextStyle(fontSize: 20, color: Constants.Colors.PRIMARY_SWATCH),),
             )
           ),
           Container(
             alignment: Alignment.bottomCenter,
             padding: EdgeInsets.only(left: (50 * t), right: (50 * t)),
             child: Hero(
-              tag: "SearchField",
+              tag: widget.heroTag,
               child: Material(
                 color: Colors.transparent,
                 child: Input(InputThemes.main,
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   controller: _controller,
-                  hint: getString("search"),
+                  hint: widget.placeholder,
                   icon: "assets/img/icSearchWhite.webp",
                   iconColor: Constants.Colors.PRIMARY_SWATCH,
                   onTextChanged: widget.onTextChanged,
