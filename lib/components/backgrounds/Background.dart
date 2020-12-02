@@ -58,7 +58,7 @@ class Background extends StatelessWidget{
               bottomNavigation: bottomNavigation,
               floatingActionButton: floatingActionButton,
             )
-          ) : (appBarConfig != null? (
+          ) : (
             _StaticBackground(
               child: child,
               theme: _theme,
@@ -67,7 +67,7 @@ class Background extends StatelessWidget{
               bottomNavigation: bottomNavigation,
               floatingActionButton: floatingActionButton,
             )
-          ) : null)),
+          )),
         ],
       ),
     );
@@ -99,10 +99,10 @@ class AppBarSliverConfig {
   final double expandedHeight;
 
   AppBarSliverConfig({
-    this.isSnap,
-    this.isPinned,
-    this.isFloating,
-    this.expandedHeight
+    this.isSnap = false,
+    this.isPinned = false,
+    this.isFloating = false,
+    @required this.expandedHeight
   });
 }
 
