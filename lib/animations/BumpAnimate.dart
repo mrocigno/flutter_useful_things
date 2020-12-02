@@ -13,8 +13,6 @@ class BumpAnimate extends StatefulWidget {
   _BumpAnimateState createState() => _BumpAnimateState();
 }
 
-//typedef BumpAnimatedBuilder = Widget Function(AnimationController controller, Animation<double> animation);
-
 class _BumpAnimateState extends State<BumpAnimate> with TickerProviderStateMixin {
 
   AnimationController _controller;

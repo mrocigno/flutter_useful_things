@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_useful_things/constants/Colors.dart' as Constants;
 
-class BackgroundThemes {
+class BackgroundTheme {
 
-  static BackgroundThemes main = BackgroundThemes(
+  static BackgroundTheme main = BackgroundTheme(
     statusBarBrightness: Brightness.dark,
     centralizeTitle: true,
     titleColor: Colors.white,
@@ -21,7 +21,7 @@ class BackgroundThemes {
     )
   );
 
-  static BackgroundThemes details = BackgroundThemes(
+  static BackgroundTheme details = BackgroundTheme(
     statusBarBrightness: Brightness.light,
     centralizeTitle: true,
     pinned: true,
@@ -33,7 +33,7 @@ class BackgroundThemes {
     )
   );
 
-  static BackgroundThemes search = BackgroundThemes(
+  static BackgroundTheme search = BackgroundTheme(
     statusBarBrightness: Brightness.light,
     centralizeTitle: true,
     pinned: true,
@@ -45,7 +45,7 @@ class BackgroundThemes {
     )
   );
 
-  static BackgroundThemes loginPage = BackgroundThemes(
+  static BackgroundTheme loginPage = BackgroundTheme(
     statusBarBrightness: Brightness.light,
     centralizeTitle: false,
     titleColor: Colors.black,
@@ -58,7 +58,7 @@ class BackgroundThemes {
     )
   );
 
-  BackgroundThemes({this.decoration, this.centralizeTitle, this.titleColor, this.statusBarBrightness, this.pinned = false, this.elevation = 1, this.appBarColor = Colors.transparent});
+  BackgroundTheme({this.decoration, this.centralizeTitle, this.titleColor, this.statusBarBrightness, this.pinned = false, this.elevation = 1, this.appBarColor = Colors.transparent});
 
   final BoxDecoration decoration;
   final bool centralizeTitle;

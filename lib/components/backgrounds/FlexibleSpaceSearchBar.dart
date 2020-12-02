@@ -20,6 +20,9 @@ class FlexibleSpaceSearchBar extends StatefulWidget {
   final String title;
   final String placeholder;
   final String heroTag;
+  final InputThemes inputTheme;
+  final Color titleColor;
+  final String searchIconPath;
 
   FlexibleSpaceSearchBar({
     Key key,
@@ -29,7 +32,10 @@ class FlexibleSpaceSearchBar extends StatefulWidget {
     this.onTextChanged,
     this.title = "",
     this.placeholder = "",
-    this.heroTag = "SearchField"
+    this.heroTag = "SearchField",
+    this.inputTheme,
+    this.titleColor = Colors.black,
+    this.searchIconPath
   }) : super(key: key);
 
   @override
@@ -76,7 +82,7 @@ class FlexibleSpaceSearchBarState extends State<FlexibleSpaceSearchBar> {
             child: Container(
               alignment: Alignment.center,
               height: 56,
-              child: Text(widget.title, style: TextStyle(fontSize: 20, color: Constants.Colors.PRIMARY_SWATCH),),
+              child: Text(widget.title, style: TextStyle(fontSize: 20, color: widget.titleColor),),
             )
           ),
           Container(
@@ -86,11 +92,11 @@ class FlexibleSpaceSearchBarState extends State<FlexibleSpaceSearchBar> {
               tag: widget.heroTag,
               child: Material(
                 color: Colors.transparent,
-                child: Input(InputThemes.main,
+                child: Input(widget.inputTheme ?? InputThemes.main,
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   controller: _controller,
                   hint: widget.placeholder,
-                  icon: "assets/img/icSearchWhite.webp",
+                  icon: widget.searchIconPath,
                   iconColor: Constants.Colors.PRIMARY_SWATCH,
                   onTextChanged: widget.onTextChanged,
                   onFieldSubmitted: (value) => widget.onPerformSearch?.call(value),

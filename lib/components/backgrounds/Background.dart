@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_useful_things/components/backgrounds/BackgroundThemes.dart';
+import 'package:flutter_useful_things/components/backgrounds/BackgroundTheme.dart';
 import 'package:flutter_useful_things/components/inputs/InputText.dart';
 import 'package:flutter_useful_things/constants/Colors.dart' as Constants;
 import 'package:flutter_useful_things/utils/Functions.dart';
@@ -20,13 +20,12 @@ class Background extends StatelessWidget{
     this.bottomSheet,
     this.floatingActionButton,
     this.centerTitle = true,
-    this.hasAppbar = true,
     this.flexibleSpace,
-    this.leading
+    this.leading,
+    this.appBarConfig
   }) : super(key: key);
 
   final bool centerTitle;
-  final bool hasAppbar;
   final Widget child;
   final Widget title;
   final Widget bottomSheet;
@@ -34,18 +33,19 @@ class Background extends StatelessWidget{
   final Function onNavigationClick;
   final List<Widget> actions;
   final Widget bottomNavigation;
-  final BackgroundThemes theme;
+  final BackgroundTheme theme;
   final WillPopCallback onWillPop;
   final FloatingActionButton floatingActionButton;
   final Widget flexibleSpace;
   final Widget leading;
+  final AppBarConfig appBarConfig;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
 
   @override
   Widget build(BuildContext context) {
-    BackgroundThemes _theme = theme ?? BackgroundThemes.main;
+    BackgroundTheme _theme = theme ?? BackgroundTheme.main;
 
     return WillPopScope(
       onWillPop: onWillPop,
@@ -57,86 +57,158 @@ class Background extends StatelessWidget{
             decoration: _theme.decoration,
             clipBehavior: Clip.hardEdge,
           ),
-          Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: Colors.transparent,
-            bottomNavigationBar: bottomNavigation,
-            floatingActionButton: floatingActionButton,
-            appBar: (hasAppbar? (
-              AppBar(
-                centerTitle: centerTitle,
-                iconTheme: IconThemeData(color: _theme.titleColor),
-                textTheme: TextTheme(headline6: TextStyle(color: _theme.titleColor, fontSize: 20, fontFamily: "lato")),
-                title: title,
-                backgroundColor: _theme.appBarColor,
-                brightness: Brightness.dark,
-                elevation: 0,
-                leading: leading,
-                actions: actions,
-                flexibleSpace: flexibleSpace,
-              )
-            ) : null),
-            body: child,
-            drawer: (showDrawer?
-              Drawer(
-                child: Container(
-                  color: Colors.red,
-                ),
-              ) : null
-            ),
-          ),
+          (appBarConfig?.sliverConfig != null? (
+            _SliverBackground(
+              child: child,
+              theme: _theme,
+              scaffoldKey: _scaffoldKey,
+              appBarConfig: appBarConfig,
+              bottomNavigation: bottomNavigation,
+              floatingActionButton: floatingActionButton,
+            )
+          ) : (appBarConfig != null? (
+            _StaticBackground(
+              child: child,
+              theme: _theme,
+              scaffoldKey: _scaffoldKey,
+              appBarConfig: appBarConfig,
+              bottomNavigation: bottomNavigation,
+              floatingActionButton: floatingActionButton,
+            )
+          ) : null)),
         ],
       ),
     );
   }
 }
 
-//class BackgroundTheme {
-//
-//  static BackgroundTheme main = BackgroundTheme(
-//    titleColor: Colors.white,
-//    decoration: BoxDecoration(
-//      gradient: LinearGradient(
-//        begin: Alignment.topCenter,
-//        end: Alignment.bottomCenter,
-//        colors: [
-//          Constants.Colors.GRADIENT_BACKGROUND_INI,
-//          Constants.Colors.GRADIENT_BACKGROUND_END
-//        ]
-//      )
-//    )
-//  );
-//
-//  static BackgroundTheme details = BackgroundTheme(
-//    titleColor: Constants.Colors.COLOR_PRIMARY,
-//    decoration: BoxDecoration(
-//      color: Constants.Colors.BACKGROUND_MARBLE_HIGH
-//    )
-//  );
-//
-//  static BackgroundTheme test = BackgroundTheme(
-//    titleColor: Constants.Colors.COLOR_PRIMARY,
-//    decoration: BoxDecoration(
-//      color: Colors.transparent
-//    )
-//  );
-//
-//  static BackgroundTheme loginPage = BackgroundTheme(
-//    titleColor: Colors.black,
-//    decoration: BoxDecoration(
-////      color: Constants.Colors.BLACK_TRANSPARENT,
-//        borderRadius: BorderRadius.only(
-//            topRight: Radius.circular(20),
-//            topLeft: Radius.circular(20)
-//        )
-//    )
-//  );
-//
-//  BackgroundTheme({this.decoration, this.titleColor});
-//
-//  final BoxDecoration decoration;
-//  final Color titleColor;
-//}
+class AppBarConfig {
+  final bool isTitleCentralized;
+  final Widget title;
+  final Widget leading;
+  final List<Widget> actions;
+  final Widget flexibleSpace;
+  final AppBarSliverConfig sliverConfig;
+
+  AppBarConfig({
+    this.isTitleCentralized,
+    this.title,
+    this.leading,
+    this.actions,
+    this.flexibleSpace,
+    this.sliverConfig
+  });
+}
+
+class AppBarSliverConfig {
+  final bool isSnap;
+  final bool isPinned;
+  final bool isFloating;
+  final double expandedHeight;
+
+  AppBarSliverConfig({
+    this.isSnap,
+    this.isPinned,
+    this.isFloating,
+    this.expandedHeight
+  });
+}
+
+class _StaticBackground extends StatelessWidget {
+
+  final Key scaffoldKey;
+  final Widget bottomNavigation;
+  final FloatingActionButton floatingActionButton;
+  final AppBarConfig appBarConfig;
+  final BackgroundTheme theme;
+  final Widget child;
+
+  const _StaticBackground({
+    Key key,
+    this.scaffoldKey,
+    this.bottomNavigation,
+    this.floatingActionButton,
+    this.appBarConfig,
+    this.theme,
+    this.child
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: Colors.transparent,
+      bottomNavigationBar: bottomNavigation,
+      floatingActionButton: floatingActionButton,
+      appBar: (appBarConfig != null? (
+          AppBar(
+            centerTitle: appBarConfig.isTitleCentralized,
+            iconTheme: IconThemeData(color: theme.titleColor),
+            textTheme: TextTheme(headline6: TextStyle(color: theme.titleColor, fontSize: 20)),
+            title: appBarConfig.title,
+            backgroundColor: theme.appBarColor,
+            brightness: Brightness.dark,
+            elevation: 0,
+            leading: appBarConfig.leading,
+            actions: appBarConfig.actions,
+            flexibleSpace: appBarConfig.flexibleSpace,
+          )
+      ) : null),
+      body: child
+    );
+  }
+}
+
+class _SliverBackground extends StatelessWidget {
+
+  final Key scaffoldKey;
+  final Widget bottomNavigation;
+  final FloatingActionButton floatingActionButton;
+  final AppBarConfig appBarConfig;
+  final BackgroundTheme theme;
+  final Widget child;
+
+  const _SliverBackground({
+    Key key,
+    this.scaffoldKey,
+    this.bottomNavigation,
+    this.floatingActionButton,
+    this.appBarConfig,
+    this.theme,
+    this.child
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: scaffoldKey,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      bottomNavigationBar: bottomNavigation,
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            actions: appBarConfig.actions,
+            brightness: theme.statusBarBrightness,
+            floating: appBarConfig.sliverConfig.isFloating,
+            pinned: appBarConfig.sliverConfig.isPinned,
+            snap: appBarConfig.sliverConfig.isSnap,
+            leading: appBarConfig.leading,
+            expandedHeight: appBarConfig.sliverConfig.expandedHeight,
+            centerTitle: theme.centralizeTitle,
+            iconTheme: IconThemeData(color: theme.titleColor),
+            title: appBarConfig.title,
+            backgroundColor: theme.appBarColor,
+            elevation: theme.elevation,
+            flexibleSpace: appBarConfig.flexibleSpace,
+          ),
+          child
+        ],
+      ),
+    );
+  }
+}
+
 
 class AppBarAction extends StatelessWidget{
 
