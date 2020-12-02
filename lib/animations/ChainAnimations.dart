@@ -23,19 +23,18 @@ class ChainAnimations extends StatelessWidget {
   Widget build(BuildContext context) {
      _notifier.value = 1;
 
-     return Wrap();
-    // return AnimatedBuilder(
-    //   animation: _notifier,
-    //   child: child,
-    //   builder: (context, child) {
-    //     Widget widget = child;
-    //     animations.forEach((element) {
-    //       widget = element.builder(widget, (_notifier.value >= element.sequence && startAnimation), upSequence);
-    //       if(_notifier.value == element.sequence && startAnimation) element.onStart?.call();
-    //     });
-    //     return widget;
-    //   },
-    // );
+    return AnimatedBuilder(
+      animation: _notifier,
+      child: child,
+      builder: (context, child) {
+        Widget widget = child;
+        animations.forEach((element) {
+          widget = element.builder(widget, (_notifier.value >= element.sequence && startAnimation), upSequence);
+          if(_notifier.value == element.sequence && startAnimation) element.onStart?.call();
+        });
+        return widget;
+      },
+    );
   }
 }
 

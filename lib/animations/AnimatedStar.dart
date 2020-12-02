@@ -26,7 +26,8 @@ class AnimatedStarState extends State<AnimatedStar> with SingleTickerProviderSta
     super.initState();
     Duration duration = Duration(milliseconds: 1500);
     controller = AnimationController(
-        duration: duration
+      vsync: this,
+      duration: duration
     );
   }
 
