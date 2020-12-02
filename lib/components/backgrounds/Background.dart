@@ -10,28 +10,20 @@ class Background extends StatelessWidget{
   Background({
     Key key,
     this.child,
-    this.title,
-    this.showDrawer = false,
     this.theme,
     this.onNavigationClick,
-    this.actions,
     this.bottomNavigation,
     this.onWillPop,
     this.bottomSheet,
     this.floatingActionButton,
-    this.centerTitle = true,
     this.flexibleSpace,
     this.leading,
     this.appBarConfig
   }) : super(key: key);
 
-  final bool centerTitle;
   final Widget child;
-  final Widget title;
   final Widget bottomSheet;
-  final bool showDrawer;
   final Function onNavigationClick;
-  final List<Widget> actions;
   final Widget bottomNavigation;
   final BackgroundTheme theme;
   final WillPopCallback onWillPop;
