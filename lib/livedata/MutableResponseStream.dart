@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer' as dev;
+import 'package:dio/dio.dart';
 import 'package:flutter_useful_things/livedata/ErrorResponse.dart';
 import 'package:flutter_useful_things/livedata/ResponseStream.dart';
 import 'package:rxdart/rxdart.dart';
@@ -45,7 +46,14 @@ class MutableResponseStream<T> {
     } catch (exception, stacktrace) {
       dev.log("Error inside postLoad $T");
       dev.log("$exception \n $stacktrace");
-      error.add(exception);
+      var errorResponse = (exception is DioError? (
+        ErrorResponse(
+          code: exception.response.statusCode,
+          message: exception.response.statusMessage,
+          data: exception.response.data
+        )
+      ) : exception );
+      error.add(errorResponse);
       onError?.call(exception);
     } finally {
       if(!isClosed){
@@ -59,18 +67,12 @@ class MutableResponseStream<T> {
     this.data.add(data);
   }
 
-  void observeLoading(void onLoading(bool loading)) => loading.listen(onLoading);
-  void observeSuccess(void onSuccess(T data)) => data.listen(onSuccess);
-  void observeError(void onError(ErrorResponse error)) => error.listen(onError);
+  void addError(dynamic error) {
+    this.error.add(error);
+  }
 
-  void observe({
-    void onSuccess(T data),
-    void onLoading(bool loading),
-    void onError(ErrorResponse error)
-  }) {
-    if(onSuccess != null) observeSuccess(onSuccess);
-    if(onLoading != null) observeLoading(onLoading);
-    if(onError != null) observeError(onError);
+  void setLoading(bool loading) {
+    this.loading.add(loading);
   }
 
   void close() {

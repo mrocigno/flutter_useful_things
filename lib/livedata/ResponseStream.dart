@@ -16,8 +16,12 @@ class ResponseStream<T> {
   ResponseStream(this._mutable);
 
   void observeLoading(void onLoading(bool loading)) => loading.listen(onLoading);
+  void observeEmpty(void onEmpty(bool empty)) => empty.listen(onEmpty);
   void observeSuccess(void onSuccess(T data)) => success.listen(onSuccess);
-  void observeError(void onError(dynamic error)) => error.listen(onError);
+  void observeError(void onError(dynamic error)) => error.listen((listened) {
+    if (listened == null) return;
+    onError(listened);
+  });
 
   void observe({
     void onSuccess(T data),
