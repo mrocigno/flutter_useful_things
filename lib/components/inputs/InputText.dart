@@ -77,7 +77,7 @@ class InputState extends State<Input> {
                   children: [
                     TextFormField(
                       controller: _controller,
-                      cursorColor: widget.theme.textColor,
+                      cursorColor: widget.theme.style.color,
                       keyboardType: widget.keyboardType,
                       obscureText: widget.obscureText,
                       focusNode: widget.focusNode,
