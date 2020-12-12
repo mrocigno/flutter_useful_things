@@ -12,6 +12,7 @@ class Input extends StatefulWidget {
 
   final InputThemes theme;
   final bool obscureText;
+  final bool autoFocus;
   final String icon;
   final Color iconColor;
   final String hint;
@@ -36,7 +37,8 @@ class Input extends StatefulWidget {
     this.obscureText = false,
     this.onFieldSubmitted,
     this.focusNode,
-    this.onTextChanged
+    this.onTextChanged,
+    this.autoFocus = false
   });
 
   @override
@@ -84,9 +86,7 @@ class InputState extends State<Input> {
                         _controller.validate();
                         return;
                       },
-                      style: TextStyle(
-                        color: widget.theme.textColor,
-                      ),
+                      style: widget.theme.style,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: widget.hint,
@@ -148,20 +148,23 @@ class InputState extends State<Input> {
 
 class InputThemes {
   InputThemes({
-    this.background, this.textColor, this.hintColor, this.iconFit
+    this.background, this.hintColor, this.iconFit, this.style
   });
 
   static InputThemes main = InputThemes(
-      textColor: Colors.black,
       hintColor: Color.fromRGBO(0, 0, 0, .5),
       iconFit: BoxFit.scaleDown,
       background: BoxDecoration(
         color: Colors.white
-      )
+      ),
+    style: TextStyle(
+      color: Colors.black,
+    )
   );
 
   final BoxDecoration background;
   final Color textColor;
   final Color hintColor;
   final BoxFit iconFit;
+  final TextStyle style;
 }
