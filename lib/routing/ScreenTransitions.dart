@@ -17,7 +17,7 @@ class ScreenTransitions {
     Navigator.pushReplacement(context, PageRouteBuilder(
       settings: RouteSettings(name: screen.name),
       pageBuilder: (context, animation, secondaryAnimation) => BaseScreenStateful(screen),
-      transitionDuration: Duration(milliseconds: 800),
+      transitionDuration: Duration(milliseconds: 300),
       transitionsBuilder: _getAnimation(animation),
     ));
   }
