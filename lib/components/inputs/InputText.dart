@@ -163,7 +163,6 @@ class InputThemes {
   );
 
   final BoxDecoration background;
-  final Color textColor;
   final Color hintColor;
   final BoxFit iconFit;
   final TextStyle style;
