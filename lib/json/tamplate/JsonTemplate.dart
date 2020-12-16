@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:flutter_useful_things/json/annotations/JsonMapperAnnotations.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -8,6 +9,7 @@ final _doubleChecker = TypeChecker.fromRuntime(double);
 final _boolChecker = TypeChecker.fromRuntime(bool);
 final _numChecker = TypeChecker.fromRuntime(num);
 final _intChecker = TypeChecker.fromRuntime(int);
+final _listChecker = TypeChecker.fromRuntime(List);
 
 final _serializeChecker = TypeChecker.fromRuntime(JsonSerialize);
 final _ignoreChecker = TypeChecker.fromRuntime(JsonIgnore);
@@ -65,14 +67,29 @@ class JsonTemplate {
   String _getToJsonValue(FieldElement field) {
     var value = _getFieldName(field);
     if (field.isPrimitiveType) {
-      return '\"$value\": ${field.name},';
+      return '\"$value\": this.${field.name},';
     } else {
       if (field.isSerialize) {
-        return '\"$value\": ${field.name}.toJson(),';
+        return '\"$value\": this.${field.name}.toJson(),';
       } else {
-        return '\"$value\": ${field.name}.toString(),';
+        if (field.isList) {
+          var type = field.type;
+          if (type is ParameterizedType) {
+            var arg = type.typeArguments[0];
+            if (arg.isPrimitiveType) {
+              return '"$value": this.${field.name},';
+            } else if (arg.isSerialize) {
+              return '''
+                "$value": (this.${field.name} != null? (
+                  this.${field.name}.map((v) => v.toJson()).toList()
+                ) : null),
+              ''';
+            }
+          }
+        }
       }
     }
+    return '\"$value\": ${field.name}.toString(),';
   }
 
   String _getFromJsonValue(FieldElement field) {
@@ -82,10 +99,26 @@ class JsonTemplate {
     } else {
       if (field.isSerialize) {
         return 'this.${field.name} = ${field.typeAsString}()..fromJson(map["$value"]);';
-      } else {
-        return 'this.${field.name} = null;';
+      } else if (field.isList) {
+        var type = field.type;
+        if (type is ParameterizedType) {
+          var arg = type.typeArguments[0];
+          if (arg.isPrimitiveType) {
+            return 'this.${field.name} = map["$value"].cast<${arg.typeAsString}>();';
+          } else if (arg.isSerialize) {
+            return '''
+            if (map["$value"] != null) {
+              this.${field.name} = <${arg.typeAsString}>[]; 
+              map["$value"].forEach((v) {
+                this.${field.name}.add(${arg.typeAsString}()..fromJson(v));
+              });
+            }
+            ''';
+          }
+        }
       }
     }
+    return 'this.${field.name} = null;';
   }
 }
 
@@ -99,11 +132,28 @@ extension FieldElementExt on FieldElement {
 
   bool get isIgnorable => _ignoreChecker.hasAnnotationOfExact(this);
 
+  bool get isList => _listChecker.isExactlyType(type);
+
   bool get isPrimitiveType =>
       _doubleChecker.isExactlyType(type) ||
       _stringChecker.isExactlyType(type) ||
       _boolChecker.isExactlyType(type) ||
       _intChecker.isExactlyType(type) ||
       _numChecker.isExactlyType(type);
+
+}
+
+extension DartTypeExt on DartType {
+
+  String get typeAsString => getDisplayString(withNullability: false);
+
+  bool get isSerialize => _serializeChecker.hasAnnotationOfExact(element);
+
+  bool get isPrimitiveType =>
+      _doubleChecker.isExactlyType(this) ||
+      _stringChecker.isExactlyType(this) ||
+      _boolChecker.isExactlyType(this) ||
+      _intChecker.isExactlyType(this) ||
+      _numChecker.isExactlyType(this);
 
 }

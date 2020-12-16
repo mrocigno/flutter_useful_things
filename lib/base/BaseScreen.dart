@@ -9,7 +9,7 @@ class BaseScreenStateful extends StatefulWidget {
 
   final State state;
 
-  BaseScreenStateful(this.state);
+  BaseScreenStateful(this.state, {Key key}) : super(key: key);
 
   @override
   BaseScreen createState() => state;
