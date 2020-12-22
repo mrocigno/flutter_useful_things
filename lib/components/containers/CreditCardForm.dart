@@ -167,7 +167,7 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
           padding: const EdgeInsets.all(20),
           child: Column(
             children: <Widget>[
-              Input(InputThemes.main,
+              EditText(
                 controller: _numCardController,
                 margin: const EdgeInsets.symmetric(vertical: 20),
                 hint: "Número do cartão",
@@ -177,7 +177,7 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
                 children: <Widget>[
                   Expanded(
                       flex: 1,
-                      child: Input(InputThemes.main,
+                      child: EditText(
                         controller: _expireDateController,
                         margin: const EdgeInsets.only(bottom: 20, right: 10),
                         hint: "Data de validade",
@@ -186,7 +186,7 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
                   ),
                   Expanded(
                     flex: 1,
-                    child: Input(InputThemes.main,
+                    child: EditText(
                       controller: _cvvController,
                       margin: const EdgeInsets.only(bottom: 20, left: 10),
                       hint: "CVV",
@@ -196,7 +196,7 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
                   )
                 ],
               ),
-              Input(InputThemes.main,
+              EditText(
                 controller: _nameController,
                 margin: const EdgeInsets.only(bottom: 20),
                 hint: "Nome do proprietario",

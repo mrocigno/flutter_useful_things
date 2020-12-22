@@ -1,8 +1,5 @@
-
-import 'dart:developer';
-
+import 'dart:developer' as dev;
 import 'package:flutter_useful_things/base/BaseBloc.dart';
-import 'package:rxdart/rxdart.dart';
 
 T inject<T>({String named}) => Injection.inject(named: named);
 
@@ -12,15 +9,16 @@ T sharedBloc<T extends BaseBloc>({String named}) => Injection.inject(named: name
 
 class Injection {
 
-  // he will never be closed :((((
-  // ignore: close_sinks
-  static BehaviorSubject<bool> initialized = BehaviorSubject.seeded(false);
-
   static _ModuleConstructor _moduleConstructor = _ModuleConstructor();
 
-  static initialize(InjectionInitializer initializer) async {
-    await initializer(_moduleConstructor);
-    initialized.value = true;
+  static Future<bool> initialize(InjectionInitializer initializer) async {
+    try {
+      await initializer(_moduleConstructor);
+      return true;
+    } catch(e, stackTrace) {
+      dev.log("$e: $stackTrace");
+      return false;
+    }
   }
 
   static T inject<T>({String named, bool shared = false}) {
@@ -72,8 +70,8 @@ class Injection {
   }
 
   static void destroyInstance(dynamic instance){
-    var module = _moduleConstructor._modules.firstWhere((e) => e.singleton == instance);
-    module.singleton = null;
+    var module = _moduleConstructor._modules.firstWhere((e) => e.singleton == instance, orElse: () => null);
+    module?.singleton = null;
   }
 
 }

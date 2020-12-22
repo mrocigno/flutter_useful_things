@@ -22,13 +22,13 @@ class FormValidate extends StatefulWidget {
 
 class FormValidateState extends State<FormValidate> {
 
-  Set<InputState> _inputs = Set();
-  static void registerForValidate(BuildContext context, InputState input) {
+  Set<EditTextState> _inputs = Set();
+  static void registerForValidate(BuildContext context, EditTextState input) {
     _FormValidateScope state = context.dependOnInheritedWidgetOfExactType<_FormValidateScope>();
     state?.state?._register(input);
   }
 
-  void _register(InputState input){
+  void _register(EditTextState input){
     _inputs.add(input);
   }
 
@@ -46,7 +46,7 @@ class FormValidateState extends State<FormValidate> {
 
   bool validate() {
     bool error = false;
-    for (InputState child in _inputs){
+    for (EditTextState child in _inputs){
       if(!(child.widget.controller?.validate() ?? true)){
         error = true;
       }

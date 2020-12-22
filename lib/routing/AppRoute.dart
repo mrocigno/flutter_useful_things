@@ -4,6 +4,8 @@
 import "dart:developer" as dev;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_useful_things/base/BaseBloc.dart';
+import 'package:flutter_useful_things/base/BaseScreen.dart';
 
 abstract class RouteObserverMixin {
 
@@ -19,43 +21,45 @@ abstract class RouteObserverMixin {
 
 class AppRoute extends RouteObserver<PageRoute<dynamic>> {
 
-  static final Map<String, RouteObserverMixin> _observers = {};
+  static final Set<BaseScreen> _stack = {};
 
-  static void register(String screenName, RouteObserverMixin mixin){
-    _observers[screenName] = mixin;
+  static void register(BaseScreen screen){
+    _stack.add(screen);
   }
 
-  void _sendScreenView(PageRoute<dynamic> route, Type type) {
+  void _sendScreenView(PageRoute<dynamic> route, ScreenViewType type) {
     var screenName = route.settings.name;
     if(screenName != null) {
-      var routeObserver = _observers[screenName];
+      var routeObserver = _stack.firstWhere((element) => element.name == screenName, orElse: () => null);
       switch(type){
-        case Type.COMEBACK: {
+        case ScreenViewType.COMEBACK: {
           routeObserver?.onComeback();
           break;
         }
-        case Type.CALLED: {
+        case ScreenViewType.CALLED: {
           routeObserver?.onCalled();
           break;
         }
-        case Type.PAUSING: {
+        case ScreenViewType.PAUSING: {
           routeObserver?.onPause();
           break;
         }
-        case Type.EXITING: {
+        case ScreenViewType.EXITING: {
           routeObserver?.onExit();
+          _stack.remove(routeObserver);
           break;
         }
       }
     }
+
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
     super.didPop(route, previousRoute);
     if (previousRoute is PageRoute && route is PageRoute) {
-      _sendScreenView(previousRoute, Type.COMEBACK);
-      _sendScreenView(route, Type.EXITING);
+      _sendScreenView(previousRoute, ScreenViewType.COMEBACK);
+      _sendScreenView(route, ScreenViewType.EXITING);
     }
   }
 
@@ -63,21 +67,21 @@ class AppRoute extends RouteObserver<PageRoute<dynamic>> {
   void didPush(Route route, Route previousRoute) {
     super.didPush(route, previousRoute);
     if (previousRoute is PageRoute && route is PageRoute) {
-      _sendScreenView(route, Type.CALLED);
-      _sendScreenView(previousRoute, Type.PAUSING);
+      _sendScreenView(route, ScreenViewType.CALLED);
+      _sendScreenView(previousRoute, ScreenViewType.PAUSING);
     }
   }
   
   @override
   void didReplace({Route newRoute, Route oldRoute}) {
     if(newRoute is PageRoute && oldRoute is PageRoute){
-      _sendScreenView(newRoute, Type.CALLED);
-      _sendScreenView(oldRoute, Type.EXITING);
+      _sendScreenView(newRoute, ScreenViewType.CALLED);
+      _sendScreenView(oldRoute, ScreenViewType.EXITING);
     }
   }
 }
 
-enum Type {
+enum ScreenViewType {
   COMEBACK,
   CALLED,
   EXITING,

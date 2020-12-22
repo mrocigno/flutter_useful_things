@@ -2,12 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_useful_things/base/BaseBloc.dart';
 import 'package:flutter_useful_things/base/BaseFragment.dart';
+import 'package:flutter_useful_things/di/Injection.dart';
 import 'package:flutter_useful_things/routing/AppRoute.dart';
 
 class BaseScreenStateful extends StatefulWidget {
 
-  final State state;
+  final BaseScreen state;
 
   BaseScreenStateful(this.state, {Key key}) : super(key: key);
 
@@ -16,9 +18,11 @@ class BaseScreenStateful extends StatefulWidget {
 
 }
 
-abstract class BaseScreen extends State<BaseScreenStateful> implements RouteObserverMixin {
+abstract class BaseScreen<T extends BaseBloc> extends State<BaseScreenStateful> implements RouteObserverMixin {
 
   String get name;
+
+  T bsBloc;
 
   static BaseScreen of(BuildContext context){
     _BaseScreenScope state = context.dependOnInheritedWidgetOfExactType<_BaseScreenScope>();
@@ -26,11 +30,11 @@ abstract class BaseScreen extends State<BaseScreenStateful> implements RouteObse
   }
 
   Set<BaseFragment> _fragments = Set();
-  void register(BaseFragment fragment){
+  void registerFragment(BaseFragment fragment){
     _fragments.add(fragment);
   }
 
-  void unregister(BaseFragment fragment){
+  void unregisterFragment(BaseFragment fragment){
     _fragments.remove(fragment);
   }
 
@@ -57,13 +61,13 @@ abstract class BaseScreen extends State<BaseScreenStateful> implements RouteObse
   @override
   void onExit() {
     _fragments.forEach((e) => e.onExit());
+    bsBloc?.close();
   }
 
   @override
   void onPause() {
     _fragments.forEach((e) => e.onPause());
   }
-
 }
 
 class _BaseScreenScope extends InheritedWidget {

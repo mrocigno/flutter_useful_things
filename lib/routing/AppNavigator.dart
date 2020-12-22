@@ -3,35 +3,41 @@ import 'dart:developer' as dev;
 import 'package:flutter_useful_things/base/BaseScreen.dart';
 import 'package:flutter_useful_things/routing/AppRoute.dart';
 
-class ScreenTransitions {
+class AppNavigator {
 
   static void _registerObservers(BaseScreen screen) {
-    if(screen is RouteObserverMixin){
-      AppRoute.register(screen.name, screen);
-    }
+    AppRoute.register(screen);
   }
 
-  static Future<T> pushReplacement<T>(BuildContext context, BaseScreen screen, {Animations animation = Animations.FADE}){
-    // _registerObservers(screen);
-    return Navigator.pushReplacement(context, _getPageRoute<T>(screen, animation));
+  static Future<T> pushReplacement<T>(BuildContext context, BaseScreen screen, {
+    Animations animation = Animations.FADE,
+    int durationMillis = 300
+  }){
+    _registerObservers(screen);
+    return Navigator.pushReplacement(context, _getPageRoute<T>(screen, animation, durationMillis));
   }
 
   static Future<T> pushAndRemoveUntil<T>(BuildContext context, BaseScreen screen, {
     Animations animation = Animations.FADE,
-    RoutePredicate predicate
+    RoutePredicate predicate,
+    int durationMillis = 300
   }) {
-    return Navigator.pushAndRemoveUntil(context, _getPageRoute<T>(screen, animation), predicate ?? (route) => false);
+    _registerObservers(screen);
+    return Navigator.pushAndRemoveUntil(context, _getPageRoute<T>(screen, animation, durationMillis), predicate ?? (route) => false);
   }
 
-  static Future<T> push<T>(BuildContext context, BaseScreen screen, {Animations animation = Animations.SLIDE_DOWN}) {
-    // _registerObservers(screen);
-    return Navigator.push(context, _getPageRoute<T>(screen, animation));
+  static Future<T> push<T>(BuildContext context, BaseScreen screen, {
+    Animations animation = Animations.FADE,
+    int durationMillis = 300
+  }) {
+    _registerObservers(screen);
+    return Navigator.push(context, _getPageRoute<T>(screen, animation, durationMillis));
   }
 
-  static PageRouteBuilder<T> _getPageRoute<T>(BaseScreen screen, Animations animation) => PageRouteBuilder<T>(
+  static PageRouteBuilder<T> _getPageRoute<T>(BaseScreen screen, Animations animation, int durationMillis) => PageRouteBuilder<T>(
     settings: RouteSettings(name: screen.name),
     pageBuilder: (context, animation, secondaryAnimation) => BaseScreenStateful(screen),
-    transitionDuration: Duration(milliseconds: 300),
+    transitionDuration: Duration(milliseconds: durationMillis),
     transitionsBuilder: _getAnimation(animation),
   );
 

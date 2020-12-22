@@ -92,7 +92,8 @@ class FlexibleSpaceSearchBarState extends State<FlexibleSpaceSearchBar> {
               tag: widget.heroTag,
               child: Material(
                 color: Colors.transparent,
-                child: Input(widget.inputTheme ?? InputThemes.main,
+                child: EditText(
+                  theme: widget.inputTheme,
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   controller: _controller,
                   hint: widget.placeholder,
@@ -100,8 +101,8 @@ class FlexibleSpaceSearchBarState extends State<FlexibleSpaceSearchBar> {
                   iconColor: Constants.Colors.PRIMARY_SWATCH,
                   onTextChanged: widget.onTextChanged,
                   onFieldSubmitted: (value) => widget.onPerformSearch?.call(value),
-                  onTapIcon: (){
-                    widget.onPerformSearch?.call(_controller.value.text);
+                  onTapIcon: (value) {
+                    widget.onPerformSearch?.call(value);
                   },
                 ),
               ),

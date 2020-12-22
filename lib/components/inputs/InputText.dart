@@ -8,7 +8,7 @@ import 'dart:developer' as dev;
 
 import 'InputController.dart';
 
-class Input extends StatefulWidget {
+class EditText extends StatefulWidget {
 
   final InputThemes theme;
   final bool obscureText;
@@ -17,7 +17,7 @@ class Input extends StatefulWidget {
   final Color iconColor;
   final String hint;
   final TextInputType keyboardType;
-  final onTapIcon;
+  final Function(String value) onTapIcon;
   final EdgeInsets margin;
   final EdgeInsets padding;
   final ValueChanged<String> onFieldSubmitted;
@@ -25,7 +25,8 @@ class Input extends StatefulWidget {
   final InputController controller;
   final Function(String text) onTextChanged;
 
-  Input(this.theme, {
+  EditText({
+    this.theme,
     this.icon,
     this.iconColor,
     this.keyboardType = TextInputType.text,
@@ -42,16 +43,16 @@ class Input extends StatefulWidget {
   });
 
   @override
-  InputState createState() => InputState();
+  EditTextState createState() => EditTextState();
 
 }
 
-class InputState extends State<Input> {
+class EditTextState extends State<EditText> {
 
   @override
   Widget build(BuildContext context) {
-
-    var _controller = widget.controller ?? InputController();
+    final _theme = widget.theme ?? InputThemes.main;
+    final _controller = widget.controller ?? InputController();
     if(widget.icon != null){
       _controller.setIcon(widget.icon);
     }
@@ -72,12 +73,12 @@ class InputState extends State<Input> {
                     right: (widget.icon != null? 50 : 20)
                 ),
                 alignment: Alignment.center,
-                decoration: widget.theme.background,
+                decoration: _theme.background,
                 child: Wrap(
                   children: [
                     TextFormField(
                       controller: _controller,
-                      cursorColor: widget.theme.style.color,
+                      cursorColor: _theme.style.color,
                       keyboardType: widget.keyboardType,
                       obscureText: widget.obscureText,
                       focusNode: widget.focusNode,
@@ -86,12 +87,12 @@ class InputState extends State<Input> {
                         _controller.validate();
                         return;
                       },
-                      style: widget.theme.style,
+                      style: _theme.style,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: widget.hint,
                           hintStyle: TextStyle(
-                              color: widget.theme.hintColor
+                              color: _theme.hintColor
                           )
                       ),
                       onChanged: (value) {
@@ -131,10 +132,10 @@ class InputState extends State<Input> {
                       icon: Image.asset(path ?? widget.icon,
                         width: 30,
                         height: 30,
-                        fit: widget.theme.iconFit,
+                        fit: _theme.iconFit,
                         color: widget.iconColor,
                       ),
-                      onPressed: widget.onTapIcon
+                      onPressed: () => widget.onTapIcon?.call(_controller.text)
                   ),
                 );
               },

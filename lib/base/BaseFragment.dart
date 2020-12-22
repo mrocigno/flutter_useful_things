@@ -12,12 +12,12 @@ abstract class BaseFragment<T extends StatefulWidget> extends State<T> implement
   @override
   void deactivate() {
     super.deactivate();
-    BaseScreen.of(context).unregister(this);
+    BaseScreen.of(context).unregisterFragment(this);
   }
 
   @override
   Widget build(BuildContext context) {
-    BaseScreen.of(context).register(this);
+    BaseScreen.of(context).registerFragment(this);
     return buildFragment(context);
   }
 
