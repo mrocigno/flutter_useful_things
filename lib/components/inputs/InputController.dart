@@ -2,7 +2,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rxdart/subjects.dart';
 
 typedef ValidateEvent = bool Function(String text);
