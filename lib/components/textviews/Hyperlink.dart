@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_useful_things/components/textviews/PaddingText.dart';
 
 import 'TextStyles.dart';
 
@@ -8,6 +9,7 @@ class Hyperlink extends StatelessWidget {
   final String data;
   final TextStyle style;
   final onPress;
+  final EdgeInsets padding;
   final WrapAlignment wrapAlignment;
   final TextAlign textAlign;
 
@@ -16,7 +18,8 @@ class Hyperlink extends StatelessWidget {
       this.onPress,
       this.style,
       this.wrapAlignment,
-      this.textAlign
+      this.textAlign,
+      this.padding
     }
   );
 
@@ -29,7 +32,7 @@ class Hyperlink extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onPress,
-            child: Text(data, style: style, textAlign: textAlign)
+            child: PaddingText(data, style: style, textAlign: textAlign, padding: padding)
           ),
         )
       ],

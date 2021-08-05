@@ -83,6 +83,12 @@ class InputController extends TextEditingController{
     selection = TextSelection.collapsed(offset: newText.length, affinity: TextAffinity.upstream);
   }
 
+  @override
+  set text(String newText) {
+    super.text = newText;
+    setError(null);
+  }
+
   bool isEmpty() => text.length == 0;
 
   @override

@@ -13,9 +13,12 @@ class EditText extends StatefulWidget {
   final InputThemes theme;
   final bool obscureText;
   final bool autoFocus;
+  final bool readOnly;
   final String icon;
+  final double iconSize;
   final Color iconColor;
   final String hint;
+  final String labelHint;
   final TextInputType keyboardType;
   final Function(String value) onTapIcon;
   final EdgeInsets margin;
@@ -28,18 +31,21 @@ class EditText extends StatefulWidget {
   EditText({
     this.theme,
     this.icon,
+    this.iconSize = 30,
     this.iconColor,
     this.keyboardType = TextInputType.text,
     this.hint,
+    this.labelHint,
     this.onTapIcon,
     this.margin,
-    this.padding,
+    this.padding = const EdgeInsets.all(0),
     this.controller,
     this.obscureText = false,
     this.onFieldSubmitted,
     this.focusNode,
     this.onTextChanged,
-    this.autoFocus = false
+    this.autoFocus = false,
+    this.readOnly = false,
   });
 
   @override
@@ -60,40 +66,38 @@ class EditTextState extends State<EditText> {
     FormValidateState.registerForValidate(context, this);
 
     return Container(
-        padding: widget.padding,
         margin: widget.margin,
         child: Stack(
           alignment: Alignment.centerRight,
           overflow: Overflow.visible,
           children: [
             Container(
-                height: 60,
-                padding: EdgeInsets.only(
-                    left: 20,
-                    right: (widget.icon != null? 50 : 20)
+                padding: widget.padding.copyWith(
+                  right: (widget.icon != null? 30 : widget.padding.right)
                 ),
                 alignment: Alignment.center,
                 decoration: _theme.background,
                 child: Wrap(
                   children: [
                     TextFormField(
+                      readOnly: widget.readOnly,
                       controller: _controller,
                       cursorColor: _theme.style.color,
                       keyboardType: widget.keyboardType,
                       obscureText: widget.obscureText,
                       focusNode: widget.focusNode,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(_controller?.mask?.length ?? 100)
+                      ],
                       onFieldSubmitted: widget.onFieldSubmitted,
                       validator: (value) {
                         _controller.validate();
                         return;
                       },
                       style: _theme.style,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: widget.hint,
-                          hintStyle: TextStyle(
-                              color: _theme.hintColor
-                          )
+                      decoration: _theme.inputDecoration.copyWith(
+                        hintText: widget.hint,
+                        labelText: widget.labelHint
                       ),
                       onChanged: (value) {
                         _controller.setError(null);
@@ -109,7 +113,7 @@ class EditTextState extends State<EditText> {
                           duration: Duration(milliseconds: 500),
                           height: _controller.hasError? 20 : 0,
                           curve: Curves.ease,
-                          transform: Matrix4.translationValues(0, (_controller.hasError? -10 : 10), 0),
+                          transform: Matrix4.translationValues(0, (_controller.hasError? 0 : 10), 0),
                           child: Text(errorMsg ?? "",
                               style: TextStyle(color: Constants.Colors.RED_ERROR)
                           ),
@@ -129,13 +133,13 @@ class EditTextState extends State<EditText> {
                   clipBehavior: Clip.hardEdge,
                   color: Colors.transparent,
                   child: IconButton(
-                      icon: Image.asset(path ?? widget.icon,
-                        width: 30,
-                        height: 30,
-                        fit: _theme.iconFit,
-                        color: widget.iconColor,
-                      ),
-                      onPressed: () => widget.onTapIcon?.call(_controller.text)
+                    icon: Image.asset(path ?? widget.icon,
+                      width: widget.iconSize,
+                      height: widget.iconSize,
+                      fit: _theme.iconFit,
+                      color: widget.iconColor,
+                    ),
+                    onPressed: () => widget.onTapIcon?.call(_controller.text)
                   ),
                 );
               },
@@ -148,23 +152,31 @@ class EditTextState extends State<EditText> {
 }
 
 class InputThemes {
-  InputThemes({
-    this.background, this.hintColor, this.iconFit, this.style
+  const InputThemes({
+    this.background,
+    this.iconFit,
+    this.style,
+    this.inputDecoration
   });
 
   static InputThemes main = InputThemes(
-      hintColor: Color.fromRGBO(0, 0, 0, .5),
-      iconFit: BoxFit.scaleDown,
-      background: BoxDecoration(
-        color: Colors.white
-      ),
+    iconFit: BoxFit.scaleDown,
+    background: BoxDecoration(
+      color: Colors.white
+    ),
     style: TextStyle(
       color: Colors.black,
+    ),
+    inputDecoration: InputDecoration(
+      border: InputBorder.none,
+      hintStyle: TextStyle(
+        color: Color.fromRGBO(0, 0, 0, .5)
+      )
     )
   );
 
   final BoxDecoration background;
-  final Color hintColor;
+  final InputDecoration inputDecoration;
   final BoxFit iconFit;
   final TextStyle style;
 }

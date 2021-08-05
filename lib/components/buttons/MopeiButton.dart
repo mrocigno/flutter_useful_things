@@ -8,10 +8,12 @@ class MopeiButton extends StatelessWidget {
     this.theme,
     this.onTap,
     this.text,
-    this.isLoading
+    this.isLoading,
+    this.isEnabled = true
   });
 
   final MopeiButtonTheme theme;
+  final bool isEnabled;
   final Function onTap;
   final String text;
   final Stream<bool> isLoading;
@@ -29,11 +31,11 @@ class MopeiButton extends StatelessWidget {
           color: Colors.transparent,
           child: Ink(
             height: 40,
-            decoration: (isLoading? _theme.buttonDisabledBackground : _theme.buttonBackground),
+            decoration: (isLoading || !isEnabled? _theme.buttonDisabledBackground : _theme.buttonBackground),
             width: double.maxFinite,
             child: InkWell(
               borderRadius: _theme.buttonBackground.borderRadius,
-              onTap: (isLoading? null : onTap),
+              onTap: (isLoading || !isEnabled? null : onTap),
               child: Center(
                 child: (isLoading?
                   Container(
@@ -58,7 +60,7 @@ class MopeiButton extends StatelessWidget {
 
 class MopeiButtonTheme {
 
-  MopeiButtonTheme(this.textStyle, this.buttonBackground, this.buttonDisabledBackground, this.elevation, this.progressColor);
+  const MopeiButtonTheme(this.textStyle, this.buttonBackground, this.buttonDisabledBackground, this.elevation, this.progressColor);
 
   final BoxDecoration buttonBackground;
   final BoxDecoration buttonDisabledBackground;

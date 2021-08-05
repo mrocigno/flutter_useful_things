@@ -5,6 +5,7 @@ import 'package:flutter_useful_things/base/BaseApp.dart';
 import 'package:flutter_useful_things/base/BaseBloc.dart';
 import 'package:flutter_useful_things/base/BaseScreen.dart';
 import 'package:flutter_useful_things/components/containers/ResponseStreamBuilder.dart';
+import 'package:flutter_useful_things/components/inputs/InputText.dart';
 import 'package:flutter_useful_things/di/Injection.dart';
 import 'package:flutter_useful_things/livedata/ResponseStream.dart';
 import 'package:flutter_useful_things/routing/AppRoute.dart';
@@ -41,9 +42,12 @@ class Menu extends BaseScreen {
   Widget buildScreen(BuildContext context) {
     return Scaffold(
       body: ListView(
-        children: [FlatButton(onPressed: () async {
-          await AppNavigator.pushReplacement(context, Teste());
-        }, child: Text("Teste"))],
+        children: [
+          FlatButton(onPressed: () async {
+            await AppNavigator.pushReplacement(context, Teste());
+          }, child: Text("Teste")),
+          EditText()
+        ],
       ),
     );
   }
