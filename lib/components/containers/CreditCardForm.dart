@@ -15,7 +15,12 @@ import 'package:flutter_useful_things/constants/Colors.dart' as Constants;
 
 class CreditCardForm extends StatefulWidget {
 
-  CreditCardForm({Key key}) : super(key: key);
+  final InputThemes inputTheme;
+
+  CreditCardForm({
+    Key key,
+    this.inputTheme = InputThemes.main
+  }) : super(key: key);
   
   @override
   CreditCardFormState createState() => CreditCardFormState();
@@ -41,7 +46,7 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
   InputController _expireDateController = InputController(
     mask: "##/##",
     validateBuild: (wrapper) {
-      wrapper.customValidate("Data invalida", (text) {
+      wrapper.customValidate("Data inválida", (text) {
         var list = text.split("/");
         if(list.length > 1){
           var now = DateTime.now();
@@ -168,9 +173,11 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
           child: Column(
             children: <Widget>[
               EditText(
+                theme: widget.inputTheme,
                 controller: _numCardController,
                 margin: const EdgeInsets.symmetric(vertical: 20),
-                hint: "Número do cartão",
+                labelHint: "Número do cartão",
+                hint: "0000 0000 0000 0000",
                 keyboardType: TextInputType.number,
               ),
               Row(
@@ -178,18 +185,22 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
                   Expanded(
                       flex: 1,
                       child: EditText(
+                        theme: widget.inputTheme,
                         controller: _expireDateController,
                         margin: const EdgeInsets.only(bottom: 20, right: 10),
-                        hint: "Data de validade",
+                        labelHint: "Data de validade",
+                        hint: "00/00",
                         keyboardType: TextInputType.number,
                       )
                   ),
                   Expanded(
                     flex: 1,
                     child: EditText(
+                      theme: widget.inputTheme,
                       controller: _cvvController,
                       margin: const EdgeInsets.only(bottom: 20, left: 10),
-                      hint: "CVV",
+                      labelHint: "CVV",
+                      hint: "000",
                       focusNode: _cvvFocus,
                       keyboardType: TextInputType.number,
                     ),
@@ -197,9 +208,11 @@ class CreditCardFormState extends State<CreditCardForm> with SingleTickerProvide
                 ],
               ),
               EditText(
+                theme: widget.inputTheme,
                 controller: _nameController,
                 margin: const EdgeInsets.only(bottom: 20),
-                hint: "Nome do proprietario",
+                labelHint: "Nome do proprietario",
+                hint: "José da silva",
               )
             ],
           ),

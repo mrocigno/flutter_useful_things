@@ -159,7 +159,7 @@ class InputThemes {
     this.inputDecoration
   });
 
-  static InputThemes main = InputThemes(
+  static const InputThemes main = InputThemes(
     iconFit: BoxFit.scaleDown,
     background: BoxDecoration(
       color: Colors.white
