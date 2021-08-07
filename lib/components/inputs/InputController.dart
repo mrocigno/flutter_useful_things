@@ -55,27 +55,25 @@ class InputController extends TextEditingController{
     });
   }
 
+  int maskCompensation = 0;
   int oldLength = 0;
-  void handleMask(String value) {
+  void handleMask() {
     if (mask == null) return;
-    List<String> textList = text.split('');
+    maskCompensation = 0;
+    List<String> textList = unmasked.split('');
     List<String> maskList = mask.split('');
 
-    bool erasing = text.length < oldLength;
-    oldLength = text.length;
+    bool erasing = unmasked.length < oldLength;
+    oldLength = unmasked.length;
 
-    if(erasing) return;
+    if (erasing) return;
 
     var newText = "";
-    for(int i = 0; i < text.length; i++){
+    for(int i = 0; i < unmasked.length; i++){
       var textChar = textList[i];
       if(i < maskList.length) {
-        var maskChar = maskList[i];
-        if (maskChar == "#" || textChar == maskChar) {
-          newText += textChar;
-        } else {
-          newText += "$maskChar$textChar";
-        }
+        var maskChar = maskList[i + maskCompensation];
+        newText += _getChar(textChar, maskChar, maskList);
       }
     }
 
@@ -83,11 +81,27 @@ class InputController extends TextEditingController{
     selection = TextSelection.collapsed(offset: newText.length, affinity: TextAffinity.upstream);
   }
 
+  String _getChar(String textChar, String maskChar, List<String> maskList) {
+    if (maskChar == "#") {
+      return (textChar.isNumeric? textChar : "");
+    } else {
+      if (textChar.isNumeric) {
+        maskCompensation++;
+        return "$maskChar${_getChar(textChar, maskList[maskList.indexOf(maskChar) + 1], maskList)}";
+      }
+    }
+    return "";
+  }
+
   @override
   set text(String newText) {
+    var addMask = text != newText;
     super.text = newText;
+    if (addMask) handleMask();
     setError(null);
   }
+
+  String get unmasked => text.replaceAll(RegExp("\\D"), "");
 
   bool isEmpty() => text.length == 0;
 
@@ -96,6 +110,11 @@ class InputController extends TextEditingController{
     super.dispose();
     _errorMsg.close();
   }
+}
+
+extension StringExt on String {
+
+  bool get isNumeric => RegExp("\\d").hasMatch(this);
 }
 
 class _ValidateWrapper {
@@ -124,6 +143,12 @@ class _ValidateWrapper {
     }));
   }
 
+  void isCpf(String message) {
+    events.add(_Event(message, (text) {
+      return _cpfValidation(text);
+    }));
+  }
+
   void twoOrMore(String message) {
     events.add(_Event(message, (text) {
       List<String> list = text.trim().split(" ");
@@ -144,6 +169,30 @@ class _ValidateWrapper {
     }));
   }
 
+  void isBrCellphone(String message) {
+    events.add(_Event(message, (text) {
+      return RegExp(r'\([0-9]{2}\) 9[0-9]{4}-[0-9]{4}').hasMatch(text);
+    }));
+  }
+
+  void hasUppercaseChar(String message) {
+    events.add(_Event(message, (text) {
+      return RegExp(r'.*[A-Z]').hasMatch(text);
+    }));
+  }
+
+  void hasNumberChar(String message) {
+    events.add(_Event(message, (text) {
+      return RegExp(r'.*[\d]').hasMatch(text);
+    }));
+  }
+
+  void hasEspecialChar(String message) {
+    events.add(_Event(message, (text) {
+      return RegExp(r'.*[@$!%*?&]').hasMatch(text);
+    }));
+  }
+
   bool validate(){
     if(events.length == 0){
       return true;
@@ -156,6 +205,30 @@ class _ValidateWrapper {
       }
     }
     return result;
+  }
+
+  bool _cpfValidation(String cpf) {
+    if (cpf == null) return false;
+    var treated = cpf.replaceAll(RegExp(r'[^0-9]'), '');
+    if (treated.length != 11) return false;
+    if (RegExp(r'^(\d)\1*$').hasMatch(treated)) return false;
+    List<int> digits = treated.split('').map((String d) => int.parse(d)).toList();
+    var dg1 = 0;
+    for (var i in Iterable<int>.generate(9, (i) => 10 - i)) {
+      dg1 += digits[10 - i] * i;
+    }
+    dg1 %= 11;
+    var dv1 = dg1 < 2 ? 0 : 11 - dg1;
+    if (digits[9] != dv1) return false;
+    var dg2 = 0;
+    for (var i in Iterable<int>.generate(10, (i) => 11 - i)) {
+      dg2 += digits[11 - i] * i;
+    }
+    dg2 %= 11;
+    var dv2 = dg2 < 2 ? 0 : 11 - dg2;
+    if (digits[10] != dv2) return false;
+
+    return true;
   }
 }
 

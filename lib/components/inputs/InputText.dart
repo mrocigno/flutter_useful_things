@@ -101,7 +101,7 @@ class EditTextState extends State<EditText> {
                       ),
                       onChanged: (value) {
                         _controller.setError(null);
-                        _controller.handleMask(value);
+                        _controller.handleMask();
                         widget.onTextChanged?.call(value);
                       },
                     ),
